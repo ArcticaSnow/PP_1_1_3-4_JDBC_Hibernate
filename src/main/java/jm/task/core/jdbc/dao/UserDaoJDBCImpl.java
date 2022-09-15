@@ -9,6 +9,7 @@ import java.util.List;
 
 public class UserDaoJDBCImpl implements UserDao {
     private Connection connection;
+    private Statement statement;
     private PreparedStatement preparedStatement;
     private String sqlQuery;
 
@@ -21,16 +22,18 @@ public class UserDaoJDBCImpl implements UserDao {
                 "age int, PRIMARY KEY (id))";
 
         try {
+
             connection = Util.getConnection();
-            preparedStatement = connection.prepareStatement(sqlQuery);
-            preparedStatement.execute();
+            statement = connection.createStatement();
+            statement.getConnection();
+            statement.executeUpdate(sqlQuery);
             connection.commit();
         } catch (SQLException e) {
             connectionRollback();
             e.printStackTrace();
         } finally {
             try {
-                preparedStatement.close();
+                statement.close();
                 connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -43,15 +46,16 @@ public class UserDaoJDBCImpl implements UserDao {
 
         try {
             connection = Util.getConnection();
-            preparedStatement = connection.prepareStatement(sqlQuery);
-            preparedStatement.execute();
+            statement = connection.createStatement();
+            statement.getConnection();
+            statement.executeUpdate(sqlQuery);
             connection.commit();
         } catch (SQLException e) {
             connectionRollback();
             e.printStackTrace();
         } finally {
             try {
-                preparedStatement.close();
+                statement.close();
                 connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -86,11 +90,12 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void removeUserById(long id) {
-        String sqlQuery = "DELETE FROM Users WHERE id = id";
+        String sqlQuery = "DELETE FROM Users WHERE id = ?";
 
         try {
             connection = Util.getConnection();
             preparedStatement = connection.prepareStatement(sqlQuery);
+            preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
@@ -112,9 +117,9 @@ public class UserDaoJDBCImpl implements UserDao {
 
         try {
             connection = Util.getConnection();
-            preparedStatement = connection.prepareStatement(sqlQuery);
-            preparedStatement.execute();
-            ResultSet resultSet = preparedStatement.executeQuery();
+            statement = connection.createStatement();
+            statement.getConnection();
+            ResultSet resultSet = statement.executeQuery(sqlQuery);
 
             while (resultSet.next()) {
                 User user = new User();
@@ -128,7 +133,7 @@ public class UserDaoJDBCImpl implements UserDao {
             e.printStackTrace();
         } finally {
             try {
-                preparedStatement.close();
+                statement.close();
                 connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -142,15 +147,16 @@ public class UserDaoJDBCImpl implements UserDao {
 
         try {
             connection = Util.getConnection();
-            preparedStatement = connection.prepareStatement(sqlQuery);
-            preparedStatement.executeUpdate();
+            statement = connection.createStatement();
+            statement.getConnection();
+            statement.executeUpdate(sqlQuery);
             connection.commit();
         } catch (SQLException e) {
-            connectionRollback();
+//            connectionRollback();
             e.printStackTrace();
         } finally {
             try {
-                preparedStatement.close();
+                statement.close();
                 connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
